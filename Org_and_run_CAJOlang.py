@@ -4,6 +4,7 @@ Autor: Luiz Augusto Vieira Manoel
 2018.1
 '''
 
+import sys
 from datetime import datetime
 #				Variáveis do sistema				#
 #CAJOlang tem três posições na memória para inteiros,
@@ -61,7 +62,6 @@ def CAJO_READ(POS): #verificar 16BIT
 #Escreve o inteiro da área temporaria no arquivo de posição POS de fdCAJO
 def CAJO_WRITE(POS): #verificar 16BIT
 	fdCAJO[POS].write(str(temp_area))
-
 #####################################################
 
 #Função que recebe o nome do arquivo .cl como parâmetro e o executa
@@ -139,3 +139,15 @@ class CAJOlang_program(object):
 		now = datetime.now()
 		if(self.CAJOnumber == now.minute):
 			executeCAJO(self.fileName)
+			
+#Para cada linha do stdin é criado um objeto da classe CAJOlang_program			
+for line in sys.stdin:
+	CAJOfile = open(line,'r')
+	CAJOnumber = int(CAJOfile.readline())
+	CL = CAJOlang_program(CAJOnumber,line)
+	CLlist.append(CL)
+	CAJOfile.close()
+
+while(1):
+	for CLfile in CLlist:
+		CLfile.execute()

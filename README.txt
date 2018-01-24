@@ -10,5 +10,8 @@ Com o python instalado, basta acessar o dirétorio do arquivo pelo terminal e dig
 
 O programa espera como entrada programas CAJOlang (arquivos no formato .cl), que devem estar no mesmo diretório do arquivo .py
 
+OBS Importante: A primeira linha do programa CAJOlang diz o minuto X que ele roda a cada hora.
+		Dentro desse minuto, o programa vai rodar UMA VEZ a qualquer segundo (não necessariamente no minuto X e 0 segundos)
+
 ----------------------------------------
 

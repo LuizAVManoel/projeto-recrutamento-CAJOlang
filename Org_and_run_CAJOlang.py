@@ -7,23 +7,66 @@ Autor: Luiz Augusto Vieira Manoel
 from datetime import datetime
 #				Variáveis do sistema				#
 #CAJOlang tem três posições na memória para inteiros,
-A = 0 
-B = 0 
-C = 0
+intCAJO = [None]*3
 #duas posições na memória para file descriptors
-FD0 = ""
-FD1 = "" 
+fdCAJO = [None]*2
 #e uma área temporaria que guarda um inteiro.
 temp_area = 0
 #####################################################
 
 ###			Bloco de intruções CAJOlang			  ### 
+#Função que copia o que está na área temporaria para posição POS da memória int (intCAJO)
+def CAJO_COPY_TO_MEMORY(POS):
+	intCAJO[POS] = temp_area
+
+#Copia o que está na posição POS da memória int (intCAJO) para área temporaria
+def CAJO_COPY_FROM_MEMORY(POS):
+	temp_area = intCAJO[POS]
+
+#Seta o valor de number para posição POS da memória int (intCAJO)
+def CAJO_SET_MEMORY(number,POS):
+	intCAJO[POS] = number
+
+#Adiciona o valor da posição POS da memória int (intCAJO) ao valor da área temporaria
+def CAJO_ADD(POS):
+	temp_area += intCAJO[POS]
+
+#Subtrai o valor da posição POS da memória int (intCAJO) do valor da área temporaria
+def CAJO_SUBTRACT(POS):
+	temp_area -= intCAJO[POS]
+
+#Imprime o valor que está na área temporaria
+def CAJO_PRINT():
+	print("temp_area = "+str(temp_area))
+
+#Abre o arquivo de nome fileName no modo mode e armazena na posição POS da 
+#	memória de file descriptors (fdCAJO). Mode --> 0 = read e 1 = write
+def CAJO_OPEN(fileName, POS, mode):  #Conferir o tamanho de fileName
+	if mode == 0:
+		arq = open(fileName,'r')
+	elif mode == 1:
+		arq = open(fileName,'w')
+	
+	fdCAJO[POS] = arq
+
+#Fecha o file descriptor na posição POS de fdCAJO
+def CAJO_CLOSE(POS):
+	fdCAJO[POS].close()
+
+#Le um inteiro do file descriptor na posição POS de fdCAJO para área temporaria
+def CAJO_READ(POS): #verificar 16BIT
+	inteiro = fdCAJO[POS].read()
+	temp_area = int(inteiro)
+
+#Escreve o inteiro da área temporaria no arquivo de posição POS de fdCAJO
+def CAJO_WRITE(POS): #verificar 16BIT
+	fdCAJO[POS].write(str(temp_area))
 
 #####################################################
 
 #Função que recebe o nome do arquivo .cl como parâmetro e o executa
-def executeCAJO(fileName):
-	arquivoCL = open(fileName,'r') 
+def executeCAJO(CAJOfileName):
+	arquivoCL = open(CAJOfileName,'r') 
 	
 	#Todas linhas do arquivo .cl serão lidas na variável lines como lista
 	#	ou seja, cada elemento da lista lines é uma linha do arquivo .cl

@@ -7,6 +7,7 @@ Autor: Luiz Augusto Vieira Manoel
 import sys
 import time
 from datetime import datetime
+
 #				Variáveis do sistema				#
 #CAJOlang tem três posições na memória para inteiros,
 intCAJO = [None]*3
@@ -72,8 +73,8 @@ def CAJO_CLOSE(POS):
 def CAJO_READ(POS): #verificar 16BIT
 	global temp_area
 	inteiro = fdCAJO[POS].read()
-	try:
-		temp_area = int(inteiro)
+	try:  #O número é convertido primeiro pra float e depois para int pois a conversão de string
+		temp_area = int(float(inteiro)) #para int não funciona se a string tem o caracter '-'  
 	except:
 		print("Arquivo "+str(fdCAJO[POS])+" vazio ou conteúdo não numérico")
 	print("read funcionou")
@@ -94,7 +95,8 @@ def executeCAJO(CAJOfileName):
 	#	ou seja, cada elemento da lista lines é uma linha do arquivo .cl
 	lines = arquivoCL.readlines()
 	
-	#Variável de iteração do while. O valor dela significa a linha que será iterada
+	#Variável de iteração do while (execLine). O valor dela significa a 
+	#linha do arquivo CAJOlang que será executada
 	execLine = 1 
 	
 	while execLine < len(lines):
@@ -104,6 +106,7 @@ def executeCAJO(CAJOfileName):
 		
 		#Bloco de instruções jump
 		if comando[0] == "CAJO_JUMP_IF_NEGATIVE_TO":
+			print("JN, temp eh "+str(temp_area))
 			if temp_area < 0:
 				execLine = int(comando[1])
 			else:
@@ -115,11 +118,13 @@ def executeCAJO(CAJOfileName):
 			else:
 				execLine += 1
 		elif comando[0] == "CAJO_JUMP_IF_ZERO_TO":
+			print("JZ, temp eh "+str(temp_area))
 			if temp_area == 0:
 				execLine = int(comando[1])
 			else:
 				execLine += 1
 		elif comando[0] == "CAJO_JUMP":
+			print("J, temp eh "+str(temp_area))
 			execLine = int(comando[1])
 			
 		else:
@@ -183,4 +188,4 @@ for line in sys.stdin:
 while(1):
 	for CLfile in CLlist:
 		CLfile.execute()
-	time.sleep(60)
+	time.sleep(60) #Sleep garante que o mesmo programa seja executado apenas uma vez por hora

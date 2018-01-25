@@ -8,7 +8,7 @@ import sys
 import time
 from datetime import datetime
 
-#				Variáveis do sistema				#
+###					  Memória					 ###
 #CAJOlang tem três posições na memória para inteiros,
 intCAJO = [None]*3
 #duas posições na memória para file descriptors
@@ -17,44 +17,39 @@ fdCAJO = [None]*2
 temp_area = 0
 #####################################################
 
-###			Bloco de intruções CAJOlang			  ### 
+###			Bloco de instruções CAJOlang		  ### 
 #Função que copia o que está na área temporaria para posição POS da memória int (intCAJO)
 def CAJO_COPY_TO_MEMORY(POS):
 	global temp_area
 	intCAJO[POS] = temp_area
-	print("copy funcinou e temp eh "+str(temp_area))
 
 #Copia o que está na posição POS da memória int (intCAJO) para área temporaria
 def CAJO_COPY_FROM_MEMORY(POS):
 	global temp_area
 	temp_area = intCAJO[POS]
-	print("copy funcinou e temp eh "+str(temp_area))
 
 #Seta o valor de number para posição POS da memória int (intCAJO)
 def CAJO_SET_MEMORY(number,POS):
 	intCAJO[POS] = number
-	print("setmem funcionou")
 
 #Adiciona o valor da posição POS da memória int (intCAJO) ao valor da área temporaria
 def CAJO_ADD(POS):
 	global temp_area
 	temp_area += intCAJO[POS]
-	print("add funcionou")
 
 #Subtrai o valor da posição POS da memória int (intCAJO) do valor da área temporaria
 def CAJO_SUBTRACT(POS):
 	global temp_area
 	temp_area -= intCAJO[POS]
-	print("subtract funcionou")
 
 #Imprime o valor que está na área temporaria
 def CAJO_PRINT():
 	global temp_area
-	print("temp_area = "+str(temp_area))
+	print("temp_area = " + str(temp_area))
 
 #Abre o arquivo de nome fileName no modo mode e armazena na posição POS da 
 #	memória de file descriptors (fdCAJO). Mode --> 0 = read e 1 = write
-def CAJO_OPEN(fileName, POS, mode):  #Conferir o tamanho de fileName
+def CAJO_OPEN(fileName, POS, mode):
 	arq = None
 	if mode == '0':
 		arq = open(fileName,'r')
@@ -62,29 +57,25 @@ def CAJO_OPEN(fileName, POS, mode):  #Conferir o tamanho de fileName
 		arq = open(fileName,'w')
 	
 	fdCAJO[POS] = arq
-	print("Open funcionou")
 
 #Fecha o file descriptor na posição POS de fdCAJO
 def CAJO_CLOSE(POS):
 	fdCAJO[POS].close()
-	print("close funcionou")
 
 #Le um inteiro do file descriptor na posição POS de fdCAJO para área temporaria
-def CAJO_READ(POS): #verificar 16BIT
+def CAJO_READ(POS):
 	global temp_area
 	inteiro = fdCAJO[POS].read()
 	try:  #O número é convertido primeiro pra float e depois para int pois a conversão de string
 		temp_area = int(float(inteiro)) #para int não funciona se a string tem o caracter '-'  
 	except:
 		print("Arquivo "+str(fdCAJO[POS])+" vazio ou conteúdo não numérico")
-	print("read funcionou")
 
 #Escreve o inteiro da área temporaria no arquivo de posição POS de fdCAJO
-def CAJO_WRITE(POS): #verificar 16BIT
+def CAJO_WRITE(POS):
 	global temp_area
 	fdCAJO[POS].write(str(temp_area))
-	print("write funcionou")
-#####################################################
+######################################################
 
 #Função que recebe o nome do arquivo .cl como parâmetro e o executa
 def executeCAJO(CAJOfileName):
@@ -106,25 +97,21 @@ def executeCAJO(CAJOfileName):
 		
 		#Bloco de instruções jump
 		if comando[0] == "CAJO_JUMP_IF_NEGATIVE_TO":
-			print("JN, temp eh "+str(temp_area))
 			if temp_area < 0:
 				execLine = int(comando[1])
 			else:
 				execLine += 1
 		elif comando[0] == "CAJO_JUMP_IF_POSITIVE_TO":
-			print("JP, temp eh "+str(temp_area))
 			if temp_area > 0:
 				execLine = int(comando[1])
 			else:
 				execLine += 1
 		elif comando[0] == "CAJO_JUMP_IF_ZERO_TO":
-			print("JZ, temp eh "+str(temp_area))
 			if temp_area == 0:
 				execLine = int(comando[1])
 			else:
 				execLine += 1
 		elif comando[0] == "CAJO_JUMP":
-			print("J, temp eh "+str(temp_area))
 			execLine = int(comando[1])
 			
 		else:
@@ -152,7 +139,6 @@ def executeCAJO(CAJOfileName):
 		
 			execLine += 1
 		
-	
 	arquivoCL.close()
 
 '''

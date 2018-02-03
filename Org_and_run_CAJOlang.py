@@ -21,25 +21,31 @@ temp_area = 0
 #Função que copia o que está na área temporaria para posição POS da memória int (intCAJO)
 def CAJO_COPY_TO_MEMORY(POS):
 	global temp_area
+	POS = int(POS)
 	intCAJO[POS] = temp_area
 
 #Copia o que está na posição POS da memória int (intCAJO) para área temporaria
 def CAJO_COPY_FROM_MEMORY(POS):
 	global temp_area
+	POS = int(POS)
 	temp_area = intCAJO[POS]
 
 #Seta o valor de number para posição POS da memória int (intCAJO)
 def CAJO_SET_MEMORY(number,POS):
+	POS = int(POS)
+	number = int(number)
 	intCAJO[POS] = number
 
 #Adiciona o valor da posição POS da memória int (intCAJO) ao valor da área temporaria
 def CAJO_ADD(POS):
 	global temp_area
+	POS = int(POS)
 	temp_area += intCAJO[POS]
 
 #Subtrai o valor da posição POS da memória int (intCAJO) do valor da área temporaria
 def CAJO_SUBTRACT(POS):
 	global temp_area
+	POS = int(POS)
 	temp_area -= intCAJO[POS]
 
 #Imprime o valor que está na área temporaria
@@ -51,6 +57,7 @@ def CAJO_PRINT():
 #	memória de file descriptors (fdCAJO). Mode --> 0 = read e 1 = write
 def CAJO_OPEN(fileName, POS, mode):
 	arq = None
+	POS = int(POS)
 	if mode == '0':
 		arq = open(fileName,'r')
 	elif mode == '1':
@@ -60,11 +67,13 @@ def CAJO_OPEN(fileName, POS, mode):
 
 #Fecha o file descriptor na posição POS de fdCAJO
 def CAJO_CLOSE(POS):
+	POS = int(POS)
 	fdCAJO[POS].close()
 
 #Le um inteiro do file descriptor na posição POS de fdCAJO para área temporaria
 def CAJO_READ(POS):
 	global temp_area
+	POS = int(POS)
 	inteiro = fdCAJO[POS].read()
 	try:  #O número é convertido primeiro pra float e depois para int pois a conversão de string
 		temp_area = int(float(inteiro)) #para int não funciona se a string tem o caracter '-'  
@@ -73,6 +82,7 @@ def CAJO_READ(POS):
 
 #Escreve o inteiro da área temporaria no arquivo de posição POS de fdCAJO
 def CAJO_WRITE(POS):
+	POS = int(POS)
 	global temp_area
 	fdCAJO[POS].write(str(temp_area))
 ######################################################
@@ -90,6 +100,11 @@ def executeCAJO(CAJOfileName):
 	#linha do arquivo CAJOlang que será executada
 	execLine = 1 
 	
+	#Dicionário que guarda os comandos de um parãmetro
+	comandos_dict = {"CAJO_COPY_TO_MEMORY":CAJO_COPY_TO_MEMORY, "CAJO_COPY_FROM_MEMORY":CAJO_COPY_FROM_MEMORY,
+					"CAJO_ADD":CAJO_ADD, "CAJO_SUBTRACT":CAJO_SUBTRACT, "CAJO_CLOSE":CAJO_CLOSE,
+					"CAJO_READ":CAJO_READ, "CAJO_WRITE":CAJO_WRITE}
+
 	while execLine < len(lines):
 		#Função split separa a linha: comando[0] é o comando principal e 
 		#	as próximas posições (se houver) são os parâmetros
@@ -116,26 +131,14 @@ def executeCAJO(CAJOfileName):
 			
 		else:
 			#Bloco de instruções comuns
-			if comando[0] == "CAJO_COPY_TO_MEMORY":
-				CAJO_COPY_TO_MEMORY(int(comando[1]))
-			elif comando[0] == "CAJO_COPY_FROM_MEMORY":
-				CAJO_COPY_FROM_MEMORY(int(comando[1]))
+			if comando[0] in comandos_dict:
+				comandos_dict[comando[0]](comando[1])
 			elif comando[0] == "CAJO_SET_MEMORY":
-				CAJO_SET_MEMORY(int(comando[1]),int(comando[2]))
-			elif comando[0] == "CAJO_ADD":
-				CAJO_ADD(int(comando[1]))
-			elif comando[0] == "CAJO_SUBTRACT":
-				CAJO_SUBTRACT(int(comando[1]))
-			elif comando[0] == "CAJO_PRINT":
-				CAJO_PRINT()
+				CAJO_SET_MEMORY(comando[1],comando[2])
 			elif comando[0] == "CAJO_OPEN":
 				CAJO_OPEN(comando[1],int(comando[2]),comando[3])
-			elif comando[0] == "CAJO_CLOSE":
-				CAJO_CLOSE(int(comando[1]))
-			elif comando[0] == "CAJO_READ":
-				CAJO_READ(int(comando[1]))
-			elif comando[0] == "CAJO_WRITE":
-				CAJO_WRITE(int(comando[1]))
+			elif comando[0] == "CAJO_PRINT":
+				CAJO_PRINT()
 		
 			execLine += 1
 		
